@@ -1,12 +1,8 @@
 #include <stdio.h>
-#include <CL/cl.h>
-#include <CL/cl_gl.h>
+#include "Device_OpenCL.h"
 
-bool InitOpenCL()
-{
-  return true;
-}
+
 void main()
 {
-
+  Device_OpenCL::Init();
 }
