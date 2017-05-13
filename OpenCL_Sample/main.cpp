@@ -5,4 +5,5 @@
 void main()
 {
   Device_OpenCL::Init();
+  Device_OpenCL::Release();
 }

@@ -1,6 +1,7 @@
 #include "Device_OpenCL.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 
 Device_OpenCL* Device_OpenCL::instance = NULL;
 
@@ -79,6 +80,12 @@ bool Device_OpenCL::Init()
       printf("Can't get device ID\n");
       continue;
     }
+    if (instance == NULL && numberOfDevice > 0 && strstr(vendor, "Advanced Micro Devices") != NULL)
+    {
+      instance = new Device_OpenCL();
+      instance->platformID = platformList[i];
+      instance->deviceID = deviceList[0];
+    }
     for (int j = 0; j < numberOfDevice; j++)
     {
       char deviceName[128];
@@ -96,6 +103,46 @@ bool Device_OpenCL::Init()
         sprintf(deviceVersion, "Unknown");
       }
       printf("\tDevice version: %s\n", deviceVersion);
+
+      char driverVersion[128];
+      result = clGetDeviceInfo(deviceList[j], CL_DEVICE_VERSION, sizeof(driverVersion), driverVersion, NULL);
+      if (result != CL_SUCCESS)
+      {
+        sprintf(driverVersion, "Unknown");
+      }
+      printf("\tDriver version: %s\n", driverVersion);
     }
+  }
+  if (instance == NULL)
+  {
+    return false;
+  }
+  instance->context = clCreateContext(NULL, 1, &(instance->deviceID), NULL, NULL, NULL);
+  if (instance->context == NULL)
+  {
+    printf("Create context failed\n");
+    return false;
+  }
+  instance->queue = clCreateCommandQueue(instance->context, instance->deviceID, 0, NULL);
+  if (instance->queue == NULL)
+  {
+    printf("Create command queue failed\n");
+    return false;
+  }
+  printf("OpenCL init successfully ----------------------------\n");
+  return true;
+}
+
+Device_OpenCL::~Device_OpenCL()
+{
+  clReleaseContext(context);
+}
+
+void Device_OpenCL::Release()
+{
+  if (instance)
+  {
+    delete instance;
+    instance = NULL;
   }
 }
