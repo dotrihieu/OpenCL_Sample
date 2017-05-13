@@ -135,6 +135,25 @@ bool Device_OpenCL::Init()
 
 Device_OpenCL::~Device_OpenCL()
 {
+  for (int i = 0; i < kernelList.size(); i++)
+  {
+    clReleaseKernel(kernelList[i]);
+  }
+  kernelList.clear();
+
+  for (int i = 0; i < programList.size(); i++)
+  {
+    clReleaseProgram(programList[i]);
+  }
+  programList.clear();
+
+  for (int i = 0; i < bufferList.size(); i++)
+  {
+    clReleaseMemObject(bufferList[i]);
+  }
+  bufferList.clear();
+
+  clReleaseCommandQueue(queue);
   clReleaseContext(context);
 }
 
@@ -145,4 +164,47 @@ void Device_OpenCL::Release()
     delete instance;
     instance = NULL;
   }
+}
+
+cl_program Device_OpenCL::CreateAndBuildProgramFromSrc(const char* src)
+{
+  cl_program program = clCreateProgramWithSource(instance->context,
+                                                  1,
+                                                  &src,
+                                                  NULL, NULL);
+  clBuildProgram(program, 1, &(instance->deviceID), NULL, NULL, NULL);
+  instance->programList.push_back(program);
+  return program;
+}
+
+cl_kernel Device_OpenCL::CreateKernel(cl_program program, const char* functionName)
+{
+  cl_kernel kernel = clCreateKernel(program, functionName, NULL);
+  instance->kernelList.push_back(kernel);
+  return kernel;
+}
+
+cl_mem Device_OpenCL::CreateBuffer(cl_mem_flags flags, size_t size, void *initData)
+{
+  cl_int error;
+  cl_mem buffer = clCreateBuffer(instance->context,
+                                  flags,
+                                  size,
+                                  initData, &error);
+  if (buffer == NULL)
+  {
+    printf("Create buffer failed: %x\n", error);
+  }
+  instance->bufferList.push_back(buffer);
+  return buffer;
+}
+
+void Device_OpenCL::RunKernel(cl_kernel kernel, const size_t *global_work_size)
+{
+  cl_int status = clEnqueueNDRangeKernel(instance->queue, kernel, 1, NULL, global_work_size, NULL, 0, NULL, NULL);
+}
+
+void Device_OpenCL::GetDataFromBuffer(cl_mem bufferCL, size_t size, void* buffer)
+{
+  cl_int status = clEnqueueReadBuffer(instance->queue, bufferCL, CL_TRUE, 0, size, buffer, 0, NULL, NULL);
 }
