@@ -1,34 +1,17 @@
 #include <stdio.h>
 #include "Device_OpenCL.h"
+#include "TextureFile.h"
+#include "Common.h"
 
-void ReadFileToMemory(const char* fileName, const char* readMode, char** buffer, int* length)
-{
-  FILE *file = fopen(fileName, readMode);
-
-  if (file)
-  {
-    *length = 0;
-    fseek(file, 0, SEEK_END);
-    *length = ftell(file);
-    fseek(file, 0, SEEK_SET);
-    *buffer = new char[*length + 1];
-    //memset(*buffer, 0, *length + 1);
-    (*buffer)[*length] = 0;
-    fread(*buffer, 1, *length, file);
-    fclose(file);
-  }
-  else
-  {
-    printf("File %s not found", fileName);
-  }
-}
 void main()
 {
+  
   Device_OpenCL::Init();
   char* src;
   int length;
   ReadFileToMemory("HelloWorld.cl", "rb", &src, &length);
   cl_program prg = Device_OpenCL::CreateAndBuildProgramFromSrc(src);
+  delete[] src;
   cl_kernel func = Device_OpenCL::CreateKernel(prg, "helloworld");
   char input[1024];
   for (int i = 0; i < 1024; i++)
@@ -48,4 +31,8 @@ void main()
   Device_OpenCL::GetDataFromBuffer(outputBuffer, 1024, output);
 
   Device_OpenCL::Release();
+  
+  //Decode ASTC 6x6 linear RGB
+  TextureFile *tex = new TextureFile("6x6_RGB.pvr");
+  delete tex;
 }

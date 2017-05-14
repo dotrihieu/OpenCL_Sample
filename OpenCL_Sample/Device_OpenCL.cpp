@@ -80,7 +80,7 @@ bool Device_OpenCL::Init()
       printf("Can't get device ID\n");
       continue;
     }
-    if (instance == NULL && numberOfDevice > 0 && strstr(vendor, "Advanced Micro Devices") != NULL)
+    if (instance == NULL && numberOfDevice > 0 && (strstr(vendor, "Advanced Micro Devices") != NULL || strstr(vendor, "NVIDIA") != NULL))
     {
       instance = new Device_OpenCL();
       instance->platformID = platformList[i];

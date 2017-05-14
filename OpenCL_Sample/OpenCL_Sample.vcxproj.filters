@@ -21,9 +21,27 @@
     <ClCompile Include="Device_OpenCL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TextureFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device_OpenCL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PVRHeader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ASTC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
