@@ -61,6 +61,8 @@ void TextureFile::DecompressToTGA(const char *fileOutputPath)
 
 void TextureFile::DecompressASTC(const char *buffer)
 {
+	uint32_t Bw = static_cast <int> (std::ceil(this->width));
+	uint32_t Bh = static_cast <int> (std::ceil(this->height));
   uint32_t numberOfBlock;
   if (this->openGLFormat == COMPRESSED_RGBA_ASTC_6x6_KHR)
   {
