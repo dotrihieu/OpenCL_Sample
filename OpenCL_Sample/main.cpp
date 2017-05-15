@@ -35,4 +35,5 @@ void main()
   //Decode ASTC 6x6 linear RGB
   TextureFile *tex = new TextureFile("6x6_RGB.pvr");
   delete tex;
+  getchar();
 }
