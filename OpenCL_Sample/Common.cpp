@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 
 bool ReadFileToMemory(const char* fileName, const char* readMode, char** buffer, int* length)
 {
@@ -23,4 +24,9 @@ bool ReadFileToMemory(const char* fileName, const char* readMode, char** buffer,
     printf("File %s not found", fileName);
     return false;
   }
+}
+
+uint8_t GetBitLittle(const uint8_t &value, const int &index)
+{
+	return (value >> index) & 0x1;
 }

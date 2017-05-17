@@ -5,14 +5,14 @@
 TextureFile::TextureFile(const char *fileInputPath)
 {
   int length;
-  ReadFileToMemory("fileInputPath", "rb", &fileData, &length);
+  ReadFileToMemory("fileInputPath", "rb", (char**)&fileData, &length);
 
   if (length < 3)
   {
     return;
   }
   //detect header
-  if (strncmp(fileData, "PVR", 3) == 0)
+  if (strncmp((char*)fileData, "PVR", 3) == 0)
   {
     PVRHeader header;
     memcpy(&header, fileData, sizeof(PVRHeader));
@@ -51,7 +51,7 @@ TextureFile::~TextureFile()
 }
 void TextureFile::DecompressToTGA(const char *fileOutputPath)
 {
-  char* decompressData = new char[this->width*this->height*4];
+	uint8_t* decompressData = new uint8_t[this->width*this->height*4];
   if (this->openGLFormat >= COMPRESSED_RGBA_ASTC_4x4_KHR && this->openGLFormat <= COMPRESSED_RGBA_ASTC_12x12_KHR)
   {
     DecompressASTC(decompressData);
@@ -59,10 +59,10 @@ void TextureFile::DecompressToTGA(const char *fileOutputPath)
   delete[] decompressData;
 }
 
-void TextureFile::DecompressASTC(const char *buffer)
+void TextureFile::DecompressASTC(const uint8_t *buffer)
 {
-	uint32_t Bw = static_cast <int> (std::ceil(this->width));
-	uint32_t Bh = static_cast <int> (std::ceil(this->height));
+	uint8_t Bw = static_cast <int> (std::ceil(this->width));
+	uint8_t Bh = static_cast <int> (std::ceil(this->height));
   uint32_t numberOfBlock;
   if (this->openGLFormat == COMPRESSED_RGBA_ASTC_6x6_KHR)
   {
@@ -71,6 +71,10 @@ void TextureFile::DecompressASTC(const char *buffer)
   uint32_t numberOfByte = numberOfBlock * 16;
   for (int i = 0; i < numberOfBlock; i++)
   {
-
+		uint8_t* blockData = this->dataBeginPtr + 16 * i;
+		uint8_t weightWidth, weightHeight;
+		uint8_t weightRange; //from 0
+		bool dualWeightPlane_D = GetBitLittle(blockData[1], 2);
+		bool precisionBit_H = GetBitLittle(blockData[1], 1);
   }
 }
