@@ -24,6 +24,7 @@ void createData(std::vector<int> &source, int total)
 
 void main()
 {
+	/*
 	m_BasicTimer = new BasicTimer();
   Device_OpenCL::Init();
   char* src;
@@ -35,13 +36,7 @@ void main()
 	std::vector<int> input;
 	int NUM_DATA = 1000000;
 	createData(std::ref(input), NUM_DATA);
-	/*
-  char input[1024];
-  for (int i = 0; i < 1024; i++)
-  {
-    input[i] = i;
-  }
-	*/
+
   cl_mem inputBuffer = Device_OpenCL::CreateBuffer(CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, (NUM_DATA) * sizeof(int), (void *)&(input[0]));
   cl_mem outputBuffer = Device_OpenCL::CreateBuffer(CL_MEM_WRITE_ONLY, (NUM_DATA) * sizeof(char), NULL);
 
@@ -57,10 +52,12 @@ void main()
 	m_time_print = m_BasicTimer->GetCurrentTimeInSecond() - starttime;
 	printf("Print Data finished in :%f\n", m_time_print);
   Device_OpenCL::Release();
-  
-  //Decode ASTC 6x6 linear RGB
-  //TextureFile *tex = new TextureFile("6x6_RGB.pvr");
-  //delete tex;
 	delete[] output;
+	*/
+  //Decode ASTC 6x6 linear RGB
+  TextureFile *tex = new TextureFile("6x6_RGB.pvr");
+	tex->DecompressToTGA("output.tga");
+  delete tex;
+	
   getchar();
 }
