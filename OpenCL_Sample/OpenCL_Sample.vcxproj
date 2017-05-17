@@ -154,6 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BasicTimer.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Device_OpenCL.cpp" />
     <ClCompile Include="main.cpp" />
@@ -161,6 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ASTC.h" />
+    <ClInclude Include="BasicTimer.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Device_OpenCL.h" />
     <ClInclude Include="PVRHeader.h" />
