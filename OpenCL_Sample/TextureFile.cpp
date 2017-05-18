@@ -95,8 +95,11 @@ void TextureFile::DecompressASTC(const uint8_t *buffer)
 		uint8_t R0, R1, R2, A, B, Width, Height;
 		R0 = bit_4;
 		//uint8_t numberOfPartition = ((bit_12 << 1) | bit_11) + 1;
+		if (bit_8 && blockData[0] == 0xFC) //void
+		{
 
-		if (bit_0 || bit_1) //5 first case
+		}
+		else if (bit_0 || bit_1) //5 first case
 		{
 			R1 = bit_0;
 			R2 = bit_1;
@@ -168,13 +171,9 @@ void TextureFile::DecompressASTC(const uint8_t *buffer)
 					dualWeightPlane_D = 0;
 					precisionBit_H = 0;
 				}
-				else //case 8, case 9, case 11, 12, 13
+				else //case 8, case 9, case 12, 13
 				{
-					if ((bit_2 & bit_3 & bit_4 & bit_5 & bit_6) == 1) //void
-					{
-
-					}
-					else if (bit_5 == 0)
+					if (bit_5 == 0)
 					{
 						Width = 6;
 						Height = 10;
