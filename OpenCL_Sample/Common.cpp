@@ -26,7 +26,20 @@ bool ReadFileToMemory(const char* fileName, const char* readMode, char** buffer,
   }
 }
 
-uint8_t GetBitLittle(const uint8_t &value, const int &index)
+uint8_t GetBitLittleFromByte(const uint8_t &value, const int &index)
 {
 	return (value >> index) & 0x1;
+}
+
+uint8_t GetBitLittleFromByteArray(const uint8_t *value, const int &index)
+{
+	int byteIndex = index / 8;
+	int bitIndex = index % 8;
+	return GetBitLittleFromByte(value[byteIndex], bitIndex);
+}
+
+uint16_t Get16BitLittleFromByteArray(const uint8_t *value, const int &lowIndex, const int &highIndex)
+{
+	uint8_t result;
+
 }

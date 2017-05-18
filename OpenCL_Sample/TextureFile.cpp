@@ -97,7 +97,15 @@ void TextureFile::DecompressASTC(const uint8_t *buffer)
 		//uint8_t numberOfPartition = ((bit_12 << 1) | bit_11) + 1;
 		if (bit_8 && blockData[0] == 0xFC) //void
 		{
+			bool dynamicRange_D = bit_9;
+			if (dynamicRange_D) //HDR
+			{
 
+			}
+			else //LDR
+			{
+				uint16_t minS = 
+			}
 		}
 		else if (bit_0 || bit_1) //5 first case
 		{
