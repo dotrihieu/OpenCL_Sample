@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 
 bool ReadFileToMemory(const char* fileName, const char* readMode, char** buffer, int* length)
 {
@@ -40,6 +41,10 @@ uint8_t GetBitLittleFromByteArray(const uint8_t *value, const int &index)
 
 uint16_t Get16BitLittleFromByteArray(const uint8_t *value, const int &lowIndex, const int &highIndex)
 {
-	uint8_t result;
+	int lowByteIndex = lowIndex / 8;
+	int highByteIndex = highIndex / 8;
+	uint8_t temp[3];
+	memcpy(temp , value + lowByteIndex, highByteIndex - lowByteIndex + 1);
+	uint16_t result;
 
 }

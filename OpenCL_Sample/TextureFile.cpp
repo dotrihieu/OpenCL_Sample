@@ -76,19 +76,19 @@ void TextureFile::DecompressASTC(const uint8_t *buffer)
 		uint8_t weightWidth, weightHeight;
 		uint8_t weightRange; //from 0
 		
-		uint8_t bit_0 = GetBitLittle(blockData[0], 0);
-		uint8_t bit_1 = GetBitLittle(blockData[0], 1);
-		uint8_t bit_2 = GetBitLittle(blockData[0], 2);
-		uint8_t bit_3 = GetBitLittle(blockData[0], 3);
-		uint8_t bit_4 = GetBitLittle(blockData[0], 4);
-		uint8_t bit_5 = GetBitLittle(blockData[0], 5);
-		uint8_t bit_6 = GetBitLittle(blockData[0], 6);
-		uint8_t bit_7 = GetBitLittle(blockData[0], 7);
-		uint8_t bit_8 = GetBitLittle(blockData[1], 0);
-		uint8_t bit_9 = GetBitLittle(blockData[1], 1);
-		uint8_t bit_10 = GetBitLittle(blockData[1], 2);
-		uint8_t bit_11 = GetBitLittle(blockData[1], 3);
-		uint8_t bit_12 = GetBitLittle(blockData[1], 4);
+		uint8_t bit_0 = GetBitLittleFromByte(blockData[0], 0);
+		uint8_t bit_1 = GetBitLittleFromByte(blockData[0], 1);
+		uint8_t bit_2 = GetBitLittleFromByte(blockData[0], 2);
+		uint8_t bit_3 = GetBitLittleFromByte(blockData[0], 3);
+		uint8_t bit_4 = GetBitLittleFromByte(blockData[0], 4);
+		uint8_t bit_5 = GetBitLittleFromByte(blockData[0], 5);
+		uint8_t bit_6 = GetBitLittleFromByte(blockData[0], 6);
+		uint8_t bit_7 = GetBitLittleFromByte(blockData[0], 7);
+		uint8_t bit_8 = GetBitLittleFromByte(blockData[1], 0);
+		uint8_t bit_9 = GetBitLittleFromByte(blockData[1], 1);
+		uint8_t bit_10 = GetBitLittleFromByte(blockData[1], 2);
+		uint8_t bit_11 = GetBitLittleFromByte(blockData[1], 3);
+		uint8_t bit_12 = GetBitLittleFromByte(blockData[1], 4);
 		
 		bool dualWeightPlane_D = bit_10;
 		bool precisionBit_H = bit_9;
