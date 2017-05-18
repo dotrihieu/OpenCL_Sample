@@ -38,7 +38,9 @@ uint8_t GetBitLittleFromByteArray(const uint8_t *value, const int &index)
 	int bitIndex = index % 8;
 	return GetBitLittleFromByte(value[byteIndex], bitIndex);
 }
-
+//	[--------][--------][--------][--------]
+//
+//
 uint16_t Get16BitLittleFromByteArray(const uint8_t *value, const int &lowIndex, const int &highIndex)
 {
 	int lowByteIndex = lowIndex / 8;
