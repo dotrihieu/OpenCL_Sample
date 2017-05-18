@@ -43,8 +43,9 @@ uint16_t Get16BitLittleFromByteArray(const uint8_t *value, const int &lowIndex, 
 {
 	int lowByteIndex = lowIndex / 8;
 	int highByteIndex = highIndex / 8;
-	uint8_t temp[3];
-	memcpy(temp , value + lowByteIndex, highByteIndex - lowByteIndex + 1);
+	uint32_t temp;
+	memcpy(&temp , value + lowByteIndex, highByteIndex - lowByteIndex + 1);
+	temp = temp >> ((4 - (highByteIndex - lowByteIndex)) * 8 + (highIndex % 8));
 	uint16_t result;
 
 }
