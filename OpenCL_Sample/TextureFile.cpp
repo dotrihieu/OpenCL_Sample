@@ -71,7 +71,7 @@ void TextureFile::DecompressASTC(const uint8_t *buffer)
   uint32_t numberOfByte = numberOfBlock * 16;
   for (int i = 0; i < numberOfBlock; i++)
   {
-
+		uint16_t R, G, B, A;
 		uint8_t* blockData = this->dataBeginPtr + 16 * i;
 		uint8_t weightWidth, weightHeight;
 		uint8_t weightRange; //from 0
@@ -108,8 +108,6 @@ void TextureFile::DecompressASTC(const uint8_t *buffer)
 				uint16_t maxS = Get16BitLittleFromByteArray(blockData, 25, 37);
 				uint16_t minT = Get16BitLittleFromByteArray(blockData, 38, 50);
 				uint16_t maxT = Get16BitLittleFromByteArray(blockData, 51, 63);
-
-				uint16_t R, G, B, A;
 
 				if (minS == 0x1FFF
 					&& maxS == 0x1FFF
