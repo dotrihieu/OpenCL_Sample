@@ -55,6 +55,7 @@ void main()
 	delete[] output;
 	*/
   //Decode ASTC 6x6 linear RGB
+
   TextureFile *tex = new TextureFile("6x6_RGB.pvr");
 	tex->DecompressToTGA("output.tga");
   delete tex;

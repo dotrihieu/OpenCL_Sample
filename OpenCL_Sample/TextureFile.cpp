@@ -104,7 +104,23 @@ void TextureFile::DecompressASTC(const uint8_t *buffer)
 			}
 			else //LDR
 			{
-				uint16_t minS = 
+				uint16_t minS = Get16BitLittleFromByteArray(blockData, 12, 24);
+				uint16_t maxS = Get16BitLittleFromByteArray(blockData, 25, 37);
+				uint16_t minT = Get16BitLittleFromByteArray(blockData, 38, 50);
+				uint16_t maxT = Get16BitLittleFromByteArray(blockData, 51, 63);
+
+				uint16_t R = Get16BitLittleFromByteArray(blockData, 64, 79);
+				uint16_t G = Get16BitLittleFromByteArray(blockData, 80, 95);
+				uint16_t B = Get16BitLittleFromByteArray(blockData, 96, 111);
+				uint16_t A = Get16BitLittleFromByteArray(blockData, 112, 127);
+
+				if (minS == 0xFFF
+					&& maxS == 0xFFF
+					&& minT == 0xFFF
+					&& maxT == 0xFFF) //constant color
+				{
+
+				}
 			}
 		}
 		else if (bit_0 || bit_1) //5 first case
