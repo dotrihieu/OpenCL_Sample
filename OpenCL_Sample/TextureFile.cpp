@@ -1,6 +1,7 @@
 #include "TextureFile.h"
 #include <string>
 #include "Common.h"
+#include "TGAHeader.h"
 
 TextureFile::TextureFile(const char *fileInputPath)
 {
@@ -51,18 +52,40 @@ TextureFile::~TextureFile()
 }
 void TextureFile::DecompressToTGA(const char *fileOutputPath)
 {
-	uint8_t* decompressData = new uint8_t[this->width*this->height*4];
+	uint8_t* decompressData = new uint8_t[this->width*this->height*4]; //BGRA data
   if (this->openGLFormat >= COMPRESSED_RGBA_ASTC_4x4_KHR && this->openGLFormat <= COMPRESSED_RGBA_ASTC_12x12_KHR)
   {
     DecompressASTC(decompressData);
   }
+  TGAHeader header;
+  header.idlength = 0;
+  header.colourmaptype = 0;
+  header.datatypecode = 2;
+  header.colourmaporigin = 0;
+  header.colourmaplength = 0;
+  header.colourmapdepth = 0;
+  header.x_origin = 0;
+  header.y_origin = 0;
+  header.width = this->width;
+  header.height = this->height;
+  header.bitsperpixel = 32;
+  header.imagedescriptor = 0x8;
+  FILE *f = fopen(fileOutputPath, "wb");
+  if (f)
+  {
+    fwrite(&header, sizeof(TGAHeader), 1, f);
+    fwrite(decompressData, 1, this->width*this->height * 4, f);
+    fclose(f);
+  }
   delete[] decompressData;
 }
 
-void TextureFile::DecompressASTC(const uint8_t *buffer)
+void TextureFile::DecompressASTC(uint8_t *buffer)
 {
+  uint8_t *output = buffer;
 	uint8_t Bw = static_cast <int> (std::ceil(this->width));
 	uint8_t Bh = static_cast <int> (std::ceil(this->height));
+  const uint16_t bytePerUncompressedBlock = Bw * Bh *4;
   uint32_t numberOfBlock;
   if (this->openGLFormat == COMPRESSED_RGBA_ASTC_6x6_KHR)
   {
@@ -71,7 +94,6 @@ void TextureFile::DecompressASTC(const uint8_t *buffer)
   uint32_t numberOfByte = numberOfBlock * 16;
   for (int i = 0; i < numberOfBlock; i++)
   {
-		uint16_t R, G, B, A;
 		uint8_t* blockData = this->dataBeginPtr + 16 * i;
 		uint8_t weightWidth, weightHeight;
 		uint8_t weightRange; //from 0
@@ -114,10 +136,23 @@ void TextureFile::DecompressASTC(const uint8_t *buffer)
 					&& minT == 0x1FFF
 					&& maxT == 0x1FFF) //constant color
 				{
-					R = Get16BitLittleFromByteArray(blockData, 64, 71);
-					G = Get16BitLittleFromByteArray(blockData, 80, 87);
-					B = Get16BitLittleFromByteArray(blockData, 96, 103);
-					A = Get16BitLittleFromByteArray(blockData, 112, 119);
+          uint16_t ColorR, ColorG, ColorB, ColorA;
+          ColorR = Get16BitLittleFromByteArray(blockData, 64, 71);
+          ColorG = Get16BitLittleFromByteArray(blockData, 80, 87);
+          ColorB = Get16BitLittleFromByteArray(blockData, 96, 103);
+          ColorA = Get16BitLittleFromByteArray(blockData, 112, 119);
+          uint32_t byteBeginBlock = i * bytePerUncompressedBlock;
+          for (int j = 0; j < Bw; j++)
+          {
+            uint32_t byteBeginBlockRow = byteBeginBlock + j * this->width * 4;
+            for (int k = 0; k < Bh; k++)
+            {
+              output[byteBeginBlockRow + k * 4] = ColorB;
+              output[byteBeginBlockRow + k * 4 + 1] = ColorG;
+              output[byteBeginBlockRow + k * 4 + 2] = ColorR;
+              output[byteBeginBlockRow + k * 4 + 3] = ColorA;
+            }
+          }
 				}
 				else
 				{

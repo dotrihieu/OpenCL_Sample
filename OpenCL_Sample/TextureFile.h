@@ -15,5 +15,5 @@ public:
   ~TextureFile();
   void DecompressToTGA(const char *fileOutputPath);
 protected:
-  void DecompressASTC(const uint8_t *buffer);
+  void DecompressASTC(uint8_t *buffer);
 };

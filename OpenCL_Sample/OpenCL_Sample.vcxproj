@@ -167,6 +167,7 @@
     <ClInclude Include="Device_OpenCL.h" />
     <ClInclude Include="PVRHeader.h" />
     <ClInclude Include="TextureFile.h" />
+    <ClInclude Include="TGAHeader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -50,5 +50,8 @@
     <ClInclude Include="BasicTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TGAHeader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
