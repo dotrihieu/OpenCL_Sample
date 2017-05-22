@@ -182,10 +182,6 @@ void TextureFile::DecompressASTC(uint8_t *buffer)
               output[byteBeginBlockRow + k * 4 + 1] = ColorG;
               output[byteBeginBlockRow + k * 4 + 2] = ColorR;
               output[byteBeginBlockRow + k * 4 + 3] = ColorA;
-							if (byteBeginBlockRow + k * 4 + 3 > 1023)
-							{
-								printf("xxxx");
-							}
             }
           }
 				}
