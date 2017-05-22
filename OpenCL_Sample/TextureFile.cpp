@@ -2,6 +2,8 @@
 #include <string>
 #include "Common.h"
 #include "TGAHeader.h"
+#include <math.h>
+#include <algorithm> 
 
 TextureFile::TextureFile(const char *fileInputPath)
 {
@@ -83,17 +85,27 @@ void TextureFile::DecompressToTGA(const char *fileOutputPath)
 void TextureFile::DecompressASTC(uint8_t *buffer)
 {
   uint8_t *output = buffer;
-	uint8_t Bw = static_cast <int> (std::ceil(this->width));
-	uint8_t Bh = static_cast <int> (std::ceil(this->height));
-  const uint16_t bytePerUncompressedBlock = Bw * Bh *4;
-  uint32_t numberOfBlock;
+	uint8_t Bw, Bh;
+  
   if (this->openGLFormat == COMPRESSED_RGBA_ASTC_6x6_KHR)
   {
-    numberOfBlock = int((this->width + 5) / 6) * int((this->height + 5) / 6);
+		Bw = 6;
+		Bh = 6;
   }
+	else if (this->openGLFormat == COMPRESSED_RGBA_ASTC_8x8_KHR)
+	{
+		Bw = 8;
+		Bh = 8;
+	}
+	const uint16_t bytePerUncompressedBlock = Bw * Bh * 4;
+	uint32_t numberOfBlock = int((this->width + Bw - 1) / Bw) * int((this->height + Bh - 1) / Bh);
   uint32_t numberOfByte = numberOfBlock * 16;
+	int8_t blockRowCount = (this->height + Bh - 1) / Bh;
+	int8_t blockColumnCount = (this->width + Bw - 1) / Bw;
   for (int i = 0; i < numberOfBlock; i++)
   {
+		int8_t blockRow = i / blockColumnCount;
+		int8_t blockColumn = i % blockColumnCount;
 		uint8_t* blockData = this->dataBeginPtr + 16 * i;
 		uint8_t weightWidth, weightHeight;
 		uint8_t weightRange; //from 0
@@ -141,16 +153,21 @@ void TextureFile::DecompressASTC(uint8_t *buffer)
           ColorG = Get16BitLittleFromByteArray(blockData, 80, 87);
           ColorB = Get16BitLittleFromByteArray(blockData, 96, 103);
           ColorA = Get16BitLittleFromByteArray(blockData, 112, 119);
-          uint32_t byteBeginBlock = i * bytePerUncompressedBlock;
+          uint32_t byteBeginBlock = ((blockRow * Bh) * this->width + blockColumn * Bw) * 4;
           for (int j = 0; j < Bw; j++)
           {
             uint32_t byteBeginBlockRow = byteBeginBlock + j * this->width * 4;
             for (int k = 0; k < Bh; k++)
             {
+							
               output[byteBeginBlockRow + k * 4] = ColorB;
               output[byteBeginBlockRow + k * 4 + 1] = ColorG;
               output[byteBeginBlockRow + k * 4 + 2] = ColorR;
               output[byteBeginBlockRow + k * 4 + 3] = ColorA;
+							if (byteBeginBlockRow + k * 4 + 3 > 1023)
+							{
+								printf("xxxx");
+							}
             }
           }
 				}
