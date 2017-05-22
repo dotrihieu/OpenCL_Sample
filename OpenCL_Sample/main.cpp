@@ -56,8 +56,8 @@ void main()
 	*/
   //Decode ASTC 6x6 linear RGB
 
-  TextureFile *tex = new TextureFile("16x16.pvr");
-	tex->DecompressToTGA("output2.tga");
+  TextureFile *tex = new TextureFile("8x8Checkerboard.pvr");
+	tex->DecompressToTGA("output.tga");
   delete tex;
 	
   getchar();
