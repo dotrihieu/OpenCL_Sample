@@ -53,3 +53,15 @@ uint16_t Get16BitLittleFromByteArray(const uint8_t *value, const int &lowIndex, 
 	return temp;
 
 }
+
+uint8_t Get8BitLittleFromByteArray(const uint8_t *value, const int &lowIndex, const int &highIndex)
+{
+	int lowByteIndex = lowIndex / 8;
+	int highByteIndex = highIndex / 8;
+	uint16_t temp;
+	memcpy(&temp, value + lowByteIndex, highByteIndex - lowByteIndex + 1);
+	int shiftLeft = (8 * (1 - highByteIndex + lowByteIndex) + (7 - (highIndex % 8)));
+	temp = temp << shiftLeft;
+	temp = temp >> (lowIndex % 8) + shiftLeft;
+	return temp;
+}

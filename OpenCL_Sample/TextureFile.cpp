@@ -137,7 +137,16 @@ void TextureFile::DecompressASTC(uint8_t *buffer)
 		bool precisionBit_H = bit_9;
 		uint8_t R0, R1, R2, A, B, Width, Height;
 		R0 = bit_4;
-		//uint8_t numberOfPartition = ((bit_12 << 1) | bit_11) + 1;
+		uint8_t numberOfPartition = ((bit_12 << 1) | bit_11) + 1;
+		uint8_t CEM;
+		if (numberOfPartition == 1) //single partition
+		{
+			CEM = Get8BitLittleFromByteArray(blockData, 13, 16);
+		}
+		else //multi partition
+		{
+			CEM = Get8BitLittleFromByteArray(blockData, 23, 28);
+		}
 		if (bit_8 && blockData[0] == 0xFC) //void
 		{
 			bool dynamicRange_D = bit_9;
