@@ -75,6 +75,15 @@ void TextureFile::DecompressToTGA(const char *fileOutputPath)
   FILE *f = fopen(fileOutputPath, "wb");
   if (f)
   {
+		//Flip
+		uint8_t *temp = new uint8_t[this->width*4];
+		for (int i = 0; i < this->height / 2; i++)
+		{
+			memcpy(temp, decompressData + i * this->width * 4, this->width * 4);
+			memcpy(decompressData + i * this->width * 4, decompressData + (this->height - i - 1) * this->width * 4, this->width * 4);
+			memcpy(decompressData + (this->height - i - 1) * this->width * 4, temp, this->width * 4);
+		}
+		delete[] temp;
     fwrite(&header, sizeof(TGAHeader), 1, f);
     fwrite(decompressData, 1, this->width*this->height * 4, f);
     fclose(f);
