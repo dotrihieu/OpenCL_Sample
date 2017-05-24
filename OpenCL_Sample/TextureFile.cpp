@@ -139,14 +139,7 @@ void TextureFile::DecompressASTC(uint8_t *buffer)
 		R0 = bit_4;
 		uint8_t numberOfPartition = ((bit_12 << 1) | bit_11) + 1;
 		uint8_t CEM;
-		if (numberOfPartition == 1) //single partition
-		{
-			CEM = Get8BitLittleFromByteArray(blockData, 13, 16);
-		}
-		else //multi partition
-		{
-			CEM = Get8BitLittleFromByteArray(blockData, 23, 28);
-		}
+
 		if (bit_8 && blockData[0] == 0xFC) //void
 		{
 			bool dynamicRange_D = bit_9;
@@ -191,90 +184,109 @@ void TextureFile::DecompressASTC(uint8_t *buffer)
 				}
 			}
 		}
-		else if (bit_0 || bit_1) //5 first case
+		else
 		{
-			R1 = bit_0;
-			R2 = bit_1;
-			A = (bit_6 << 1) | bit_5;
-			
-			if ((bit_2 & bit_3) == 0) //3 first case
+			if (bit_0 || bit_1) //5 first case
 			{
-				B = (bit_8 << 1) | bit_7;
-				if (bit_3 == 0)
+				R1 = bit_0;
+				R2 = bit_1;
+				A = (bit_6 << 1) | bit_5;
+
+				if ((bit_2 & bit_3) == 0) //3 first case
 				{
-					Height = A + 2;
-					if (bit_2 == 0)
+					B = (bit_8 << 1) | bit_7;
+					if (bit_3 == 0)
 					{
-						Width = B + 4;
+						Height = A + 2;
+						if (bit_2 == 0)
+						{
+							Width = B + 4;
+						}
+						else
+						{
+							Width = B + 8;
+						}
 					}
 					else
 					{
-						Width = B + 8;
+						Width = A + 2;
+						Height = B + 8;
 					}
 				}
 				else
 				{
-					Width = A + 2;
-					Height = B + 8;
+					B = bit_7;
+					if (bit_8) //case 5
+					{
+						Width = B + 2;
+						Height = A + 8;
+					}
+					else //case 4
+					{
+						Width = A + 2;
+						Height = B + 6;
+					}
 				}
+			}
+			else //case 6 -> case 13
+			{
+				R1 = bit_2;
+				R2 = bit_3;
+
+				if (bit_8 == 0) //case 6, case 7
+				{
+					A = (bit_6 << 1) | bit_5;
+					if (bit_7 == 0) //case 6
+					{
+						Width = 12;
+						Height = A + 2;
+					}
+					else
+					{
+						Width = A + 2;
+						Height = 12;
+					}
+				}
+				else //case 8 -> case 13
+				{
+					if (bit_7 == 0) //case 10
+					{
+						A = (bit_6 << 1) | bit_5;
+						B = (bit_10 << 1) | bit_9;
+						Width = A + 6;
+						Height = B + 6;
+						dualWeightPlane_D = 0;
+						precisionBit_H = 0;
+					}
+					else //case 8, case 9, case 12, 13
+					{
+						if (bit_5 == 0)
+						{
+							Width = 6;
+							Height = 10;
+						}
+						else
+						{
+							Width = 10;
+							Height = 6;
+						}
+					}
+				}
+			}
+			if (numberOfPartition == 1)
+			{
+				CEM = Get8BitLittleFromByteArray(blockData, 13, 16);
 			}
 			else
 			{
-				B = bit_7;
-				if (bit_8) //case 5
+				uint8_t CEM2LowestBits = Get8BitLittleFromByteArray(blockData, 23, 24);
+				if (CEM2LowestBits)
 				{
-					Width = B + 2;
-					Height = A + 8;
-				}
-				else //case 4
-				{
-					Width = A + 2;
-					Height = B + 6;
-				}
-			}
-		}
-		else //case 6 -> case 13
-		{
-			R1 = bit_2;
-			R2 = bit_3;
-			
-			if (bit_8 == 0) //case 6, case 7
-			{
-				A = (bit_6 << 1) | bit_5;
-				if (bit_7 == 0) //case 6
-				{
-					Width = 12;
-					Height = A + 2;
+					CEM = Get8BitLittleFromByteArray(blockData, 25, 28);
 				}
 				else
 				{
-					Width = A + 2;
-					Height = 12;
-				}
-			}
-			else //case 8 -> case 13
-			{
-				if (bit_7 == 0) //case 10
-				{
-					A = (bit_6 << 1) | bit_5;
-					B = (bit_10 << 1) | bit_9;
-					Width = A + 6;
-					Height = B + 6;
-					dualWeightPlane_D = 0;
-					precisionBit_H = 0;
-				}
-				else //case 8, case 9, case 12, 13
-				{
-					if (bit_5 == 0)
-					{
-						Width = 6;
-						Height = 10;
-					}
-					else
-					{
-						Width = 10;
-						Height = 6;
-					}
+
 				}
 			}
 		}
