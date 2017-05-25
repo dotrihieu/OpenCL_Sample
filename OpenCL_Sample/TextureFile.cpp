@@ -52,6 +52,27 @@ TextureFile::~TextureFile()
 {
   delete[] fileData;
 }
+
+uint8_t CEM_to_n[16] =
+{
+	2,
+	2,
+	2,
+	2,
+	4,
+	4,
+	4,
+	4,
+	6,
+	6,
+	6,
+	6,
+	8,
+	8,
+	8,
+	8
+};
+
 void TextureFile::DecompressToTGA(const char *fileOutputPath)
 {
 	uint8_t* decompressData = new uint8_t[this->width*this->height*4]; //BGRA data
@@ -276,6 +297,26 @@ void TextureFile::DecompressASTC(uint8_t *buffer)
 			if (numberOfPartition == 1)
 			{
 				CEM = Get8BitLittleFromByteArray(blockData, 13, 16);
+				uint8_t n = CEM_to_n[CEM];
+				uint8_t *v = new uint8_t[n];
+				if (CEM == 8) //LDR RGB, direct 
+				{
+					/*
+					s0 = v0 + v2 + v4; 
+					s1 = v1 + v3 + v5;
+					if (s1 >= s0) 
+					{
+						e0 = (v0, v2, v4, 0xFF);
+						e1 = (v1, v3, v5, 0xFF);
+					}
+					else 
+					{
+						e0 = blue_contract(v1, v3, v5, 0xFF);
+						e1 = blue_contract(v0, v2, v4, 0xFF);
+					}
+					*/
+				}
+				delete[] v;
 			}
 			else
 			{
