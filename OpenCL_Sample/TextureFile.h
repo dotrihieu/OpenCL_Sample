@@ -17,3 +17,15 @@ public:
 protected:
   void DecompressASTC(uint8_t *buffer);
 };
+
+struct WeightRange
+{
+  uint8_t Range;
+  uint8_t Trits;
+  uint8_t Quints;
+  uint8_t Bits;
+  WeightRange(uint8_t r, uint8_t t, uint8_t q, uint8_t b): Range(r), Trits(t), Quints(q), Bits(b)
+  {
+
+  }
+};

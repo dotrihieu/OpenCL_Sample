@@ -73,6 +73,30 @@ uint8_t CEM_to_n[16] =
 	8
 };
 
+WeightRange R_to_WeightRangeLowPrecision[8]
+{
+  WeightRange(0, 0, 0, 0),
+  WeightRange(0, 0, 0, 0),
+  WeightRange(1, 0, 0, 1),
+  WeightRange(2, 1, 0, 0),
+  WeightRange(3, 0, 0, 2),
+  WeightRange(4, 0, 1, 0),
+  WeightRange(5, 1, 0, 1),
+  WeightRange(7, 0, 0, 3)
+};
+
+WeightRange R_to_WeightRangeHighPrecision[8]
+{
+  WeightRange(0, 0, 0, 0),
+  WeightRange(0, 0, 0, 0),
+  WeightRange(9, 0, 1, 1),
+  WeightRange(11, 1, 0, 2),
+  WeightRange(15, 0, 0, 4),
+  WeightRange(19, 0, 1, 2),
+  WeightRange(23, 1, 0, 3),
+  WeightRange(31, 0, 0, 5)
+};
+
 void TextureFile::DecompressToTGA(const char *fileOutputPath)
 {
 	uint8_t* decompressData = new uint8_t[this->width*this->height*4]; //BGRA data
@@ -156,7 +180,7 @@ void TextureFile::DecompressASTC(uint8_t *buffer)
 		
 		bool dualWeightPlane_D = bit_10;
 		bool precisionBit_H = bit_9;
-		uint8_t R0, R1, R2, A, B, Width, Height;
+		uint8_t R0, R1, R2, A, B, gridWidth, gridHeight;
 		R0 = bit_4;
 		uint8_t numberOfPartition = ((bit_12 << 1) | bit_11) + 1;
 		uint8_t CEM;
@@ -218,20 +242,20 @@ void TextureFile::DecompressASTC(uint8_t *buffer)
 					B = (bit_8 << 1) | bit_7;
 					if (bit_3 == 0)
 					{
-						Height = A + 2;
+            gridHeight = A + 2;
 						if (bit_2 == 0)
 						{
-							Width = B + 4;
+              gridWidth = B + 4;
 						}
 						else
 						{
-							Width = B + 8;
+              gridWidth = B + 8;
 						}
 					}
 					else
 					{
-						Width = A + 2;
-						Height = B + 8;
+            gridWidth = A + 2;
+            gridHeight = B + 8;
 					}
 				}
 				else
@@ -239,13 +263,13 @@ void TextureFile::DecompressASTC(uint8_t *buffer)
 					B = bit_7;
 					if (bit_8) //case 5
 					{
-						Width = B + 2;
-						Height = A + 8;
+            gridWidth = B + 2;
+            gridHeight = A + 8;
 					}
 					else //case 4
 					{
-						Width = A + 2;
-						Height = B + 6;
+            gridWidth = A + 2;
+            gridHeight = B + 6;
 					}
 				}
 			}
@@ -259,13 +283,13 @@ void TextureFile::DecompressASTC(uint8_t *buffer)
 					A = (bit_6 << 1) | bit_5;
 					if (bit_7 == 0) //case 6
 					{
-						Width = 12;
-						Height = A + 2;
+            gridWidth = 12;
+            gridHeight = A + 2;
 					}
 					else
 					{
-						Width = A + 2;
-						Height = 12;
+            gridWidth = A + 2;
+            gridHeight = 12;
 					}
 				}
 				else //case 8 -> case 13
@@ -274,8 +298,8 @@ void TextureFile::DecompressASTC(uint8_t *buffer)
 					{
 						A = (bit_6 << 1) | bit_5;
 						B = (bit_10 << 1) | bit_9;
-						Width = A + 6;
-						Height = B + 6;
+            gridWidth = A + 6;
+            gridHeight = B + 6;
 						dualWeightPlane_D = 0;
 						precisionBit_H = 0;
 					}
@@ -283,17 +307,24 @@ void TextureFile::DecompressASTC(uint8_t *buffer)
 					{
 						if (bit_5 == 0)
 						{
-							Width = 6;
-							Height = 10;
+              gridWidth = 6;
+              gridHeight = 10;
 						}
 						else
 						{
-							Width = 10;
-							Height = 6;
+              gridWidth = 10;
+              gridHeight = 6;
 						}
 					}
 				}
 			}
+
+      uint8_t **gridOfWeight = new uint8_t*[gridWidth];
+      for (int gridColumn = 0; gridColumn < gridWidth; gridColumn++)
+      {
+        gridOfWeight[gridColumn] = new uint8_t[gridHeight];
+      }
+
 			if (numberOfPartition == 1)
 			{
 				CEM = Get8BitLittleFromByteArray(blockData, 13, 16);
@@ -330,6 +361,12 @@ void TextureFile::DecompressASTC(uint8_t *buffer)
 
 				}
 			}
+
+      for (int gridColumn = 0; gridColumn < gridWidth; gridColumn++)
+      {
+        delete[] gridOfWeight[gridColumn];
+      }
+      delete[] gridOfWeight;
 		}
   }
 }
